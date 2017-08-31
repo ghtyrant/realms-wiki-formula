@@ -1,0 +1,27 @@
+[Unit]
+Description=Realms Wiki Instance '{{ name }}'
+
+[Service]
+User={{ web_user }}
+Group={{ web_group }}
+
+ExecStart={{ base_path }}/.venv/bin/python {{ base_path }}/.venv/bin/gunicorn \
+--name realms-wiki-{{ name }} \
+--access-logfile - \
+--error-logfile - \
+--worker-class gevent \
+--workers {{ num_workers }} \
+--bind {{ bind_address }} \
+--user {{ web_user }} \
+--group {{ web_group }} \
+--chdir {{ base_path }} \
+'realms:create_app()'
+
+Restart=on-failure
+WorkingDirectory={{ base_path }}
+Environment=PATH={{ base_path }}/.venv/bin:/usr/local/bin:/usr/bin:/bin:$PATH
+Environment=LC_ALL=en_US.UTF-8
+Environment=GEVENT_RESOLVER=ares
+
+[Install]
+WantedBy=multi-user.target

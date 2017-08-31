@@ -1,0 +1,53 @@
+realms-wiki:
+  web_user: www-data
+  web_group: www-data
+
+  instances:
+
+    # You can create multiple instances
+    # Each will get a separate installation (virtualenv, service, gunicorn process, ...)
+    main:
+      base_path: '/var/www/realms-wiki/'
+
+      # Install and enable systemd service
+      service: True
+
+      # Use postgresql
+      use_postgresql: True
+
+      # Use whoosh
+      use_whoosh: True
+
+      # Number of gunicorn workers
+      num_workers: 1
+
+      bind_address: 127.0.0.1:5000
+
+      # The config is in the exact format realms-wiki expects it to be, it will be serialized to json
+      # Notice the upper case keys (except in the LDAP configuration)!
+      config:
+        ALLOW_ANON: False
+        BASE_URL: https://realms.dreamfall.at
+        CACHE_TYPE: 'simple'
+        DB_URI: 'postgresql+psycopg2://user:password@127.0.0.1:5432/database'
+        PORT: 5000
+        REGISTRATION_ENABLED: false
+        SECRET_KEY: 'CHANGE_ME'
+        SITE_TITLE: 'realms-wiki'
+        WIKI_PATH: '/var/www/realms-wiki/wiki'
+        SQLALCHEMY_ECHO: False
+        SEARCH_TYPE: 'whoosh'
+        WHOOSH_INDEX: '/var/www/realms-wiki/whoosh_index'
+        WHOOSH_LANGUAGE: 'en'
+
+        AUTH_LOCAL_ENABLE: False
+        LDAP:
+          URI: 'ldap://127.0.0.1:389'
+          BIND_DN: ''
+          BIND_AUTH: ''
+          USER_SEARCH:
+            base: ou=users,dc=example,dc=com
+            filter: (&(uid=%(username)s)(memberOf=cn=wiki,ou=groups,dc=example,dc=com))
+          KEY_MAP:
+            USERNAME: uid
+            EMAIL: mail
