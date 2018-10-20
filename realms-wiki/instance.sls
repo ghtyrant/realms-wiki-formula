@@ -12,6 +12,7 @@ realms_{{ instance }}_web_dir:
 realms_{{ instance }}_venv:
   virtualenv.managed:
     - name: {{ config.base_path }}/.venv
+    - pip_upgrade: True
     - pip_pkgs:
         - realms-wiki
         {% if config.get('use_postgresql', False) %}
